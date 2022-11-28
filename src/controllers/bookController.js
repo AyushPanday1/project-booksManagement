@@ -1,3 +1,4 @@
+const { isValidObjectId } = require("mongoose")
 const bookModel = require("../models/bookmodel")
 const {isEmpty} = require("../validation/validation")
 
@@ -46,17 +47,20 @@ const createBook = async function (req, res) {
          if(!(isEmpty(userId)))
          return res.status(400).send({stauts:false, message:"userId is empty"})
 
+         if(!isValidObjectId(userId))
+         return res.status(400).send({stauts:false, message:"userId is invalid"})
+
          if(!(isEmpty(category)))
          return res.status(400).send({stauts:false, message:"category is empty"})
 
          if(!(isEmpty(subcategory)))
          return res.status(400).send({stauts:false, message:"subcategory is empty"})
      
-        const findbook = await bookModel.find({title:title})
+        const findbook = await bookModel.findOne({title:data.title})
         if(findbook)
         return res.status(400).send({status:false,message:"Title is registered please pass new title"})
 
-        const createdBook = await booksModel.create(data)
+        const createdBook = await bookModel.create(data)
         return res.status(201).send({ status: true, message: "Book created Successfully", data: createdBook })
 
     }
