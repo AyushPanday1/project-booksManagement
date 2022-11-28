@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const userController = require("../controllers/userController");
 const bookController = require("../controllers/bookController")
+const middleware = require('../middleware/auth')
 
 /*------------------------Create User-----------------------------------*/
 router.post("/register", userController.createUser);
@@ -9,11 +10,11 @@ router.post("/register", userController.createUser);
 /*------------------------User Login-----------------------------------*/
 router.post("/login", userController.login);
 
+/*---------------------------Book Create --------------------------------*/
+router.post("/createbook" , middleware.authenticate ,bookController.createBook)
+
 /*------------------------Fetch Books-----------------------------------*/
 router.get("/books", bookController.allBooks);
-
-/*---------------------------Book Create --------------------------------*/
-router.post("/createbook" , bookController.createBook)
 
 /*---------------------------Hit On Wrong Url --------------------------------*/
 router.all("/*", function(req, res){
