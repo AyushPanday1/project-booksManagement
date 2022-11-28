@@ -26,11 +26,14 @@ const createUser = async function(req,res){
         if(!(isEmpty(phone))){return res.status(400).send({stauts:false, message:"phone is required"})}
         if(!(isEmpty(email))){return res.status(400).send({stauts:false, message:"email is required"})}
         if(!(isEmpty(password))){return res.status(400).send({stauts:false, message:"password is required"})}
+        
         /*------------------------Checking mail is unique or not-----------------------------------*/
-        const uniqueEmail = await userModel.find({email:email})
-        if(!uniqueEmail){return res.status(400).send({status : false, message : "email is already exit"})}
-        const uniquePhone = await userModel.find({phone:phone})
-        if(!uniquePhone){return res.status(400).send({status : false, message : "phone is already exit"})} 
+        const duplicateEmail = await userModel.findOne({email:email})
+        if(duplicateEmail){return res.status(400).send({status : false, message : "email is already exit"})}
+        
+        const duplicatePhone = await userModel.findOne({phone:phone})
+        if(duplicatePhone){return res.status(400).send({status : false, message : "phone is already exit"})} 
+        
         /*-------------------------------  Validation(Regex)  -----------------------------------*/
         if(!(isValidTitle(title))){return res.status(400).send({status : false, msg : "Please enter correct title ex: Mr, Mrs, Miss"})}
         if(!(isValidPhone(phone))){return res.status(400).send({status : false, msg : "Invalid phone number"})}
