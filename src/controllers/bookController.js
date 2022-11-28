@@ -1,4 +1,87 @@
 const bookModel = require("../models/bookmodel")
+const mongoose = require("mongoose")
+const userModel = require("../models/userModel");
+const {isEmpty, isValidTitle, isValidPhone, isValidMail, isValidFullName, isValidPassword} = require("../validation/validation")
+
+const isValid = function (value) {
+    if (typeof value === "undefined" || typeof value === null) return false
+    if (typeof value === "String" && typeof value.trim().length === 0) return false
+    return true;
+}
+
+const isValidObjectId = function (objectId) {
+    //     return /^[0-9a-fA-F]{24}$/.test(objectId)
+    return mongoose.Types.ObjectId.isValid(objectId)
+}
+
+const isValidRequestBody = function (requestBody) {
+    return Object.keys(requestBody).length > 0
+}
+
+const createBook = async function (req, res) {
+    try {
+        let data = req.body
+        const { title, excerpt, userId, ISBN, category, subcategory, reviews } = data
+
+        // IF BODY IS EMPTY.------------------------------------------
+         if(Object.keys(data).length==0)
+         return res.status(400).send({status:false, message:"Please provide data in request body"})
+    
+
+         // IF VALUES ARE NOT IN BODY.--------------------------------
+         if(!title)
+         return res.status(400).send({stauts:false, message:"title is required"})
+
+         if(!excerpt)
+         return res.status(400).send({stauts:false, message:"excerpt is required"})
+
+         if(!userId)
+         return res.status(400).send({stauts:false, message:"userId is required"})
+
+         if(!ISBN)
+         return res.status(400).send({stauts:false, message:"ISBN is required"})
+
+         if(!category)
+         return res.status(400).send({stauts:false, message:"category is required"})
+
+         if(!subcategory)
+         return res.status(400).send({stauts:false, message:"subcategory is required"})
+
+        
+
+         // IF VALUES ARE EMPTY BY INFO.-------------------------------------
+         if(!(isEmpty(title)))
+         return res.status(400).send({stauts:false, message:"title is empty"})
+
+         if(!(isEmpty(excerpt)))
+         return res.status(400).send({stauts:false, message:"excerpt is empty"})
+
+         if(!(isEmpty(ISBN)))
+         return res.status(400).send({stauts:false, message:"ISBN is empty"})
+
+         if(!(isEmpty(userId)))
+         return res.status(400).send({stauts:false, message:"userId is empty"})
+
+         if(!(isEmpty(category)))
+         return res.status(400).send({stauts:false, message:"category is empty"})
+
+         if(!(isEmpty(subcategory)))
+         return res.status(400).send({stauts:false, message:"subcategory is empty"})
+     
+        const findbook = await bookModel.find({title:title})
+        if(findbook)
+        return res.status(400).send({status:false,message:"Title is registered please pass new title"})
+
+        const createdBook = await booksModel.create(data)
+        return res.status(201).send({ status: true, message: "Book created Successfully", data: createdBook })
+
+    }
+        catch (err) {
+            return res.status(500).send({ status: false, message: err.message })
+        }
+    }
+
+    
 
 const allBooks = async function (req, res) {
 
@@ -35,7 +118,7 @@ const allBooks = async function (req, res) {
     }
 }
 
-module.exports = {allBooks};
+module.exports = {allBooks , createBook};
 
 //nst jwt = require('jsonwebtoken')
 
