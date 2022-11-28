@@ -60,6 +60,10 @@ const createBook = async function (req, res) {
         if(findbook)
         return res.status(400).send({status:false,message:"Title is registered please pass new title"})
 
+        const findISBN = await bookModel.findOne({ISBN:data.ISBN})
+        if(findISBN)
+        return res.status(400).send({status:false,message:"ISBN is registered please pass new ISBN"})
+
         const createdBook = await bookModel.create(data)
         return res.status(201).send({ status: true, message: "Book created Successfully", data: createdBook })
 
