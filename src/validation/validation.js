@@ -24,7 +24,7 @@ const isValidFullName = function(name){
 }
 
 const isValidPassword = function(password){
-    const regex = "^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
+    const regex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,16}$/
     return regex.test(password)
 }
 

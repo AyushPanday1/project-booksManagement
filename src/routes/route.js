@@ -1,11 +1,9 @@
 const express = require('express')
 const router = express.Router()
+const userController = require('../controllers/userController')
 
-//dummy
-router.get('/check', function(req,res){
-    return res.send("perfectly working")
-})
+router.post('/register', userController.createUser)
 
-console.log("1")
+
 
 module.exports = router

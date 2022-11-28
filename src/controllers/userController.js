@@ -26,9 +26,11 @@ const createUser = async function(req,res){
         if(!(isEmpty(email))){return res.status(400).send({stauts:false, message:"email is required"})}
         if(!(isEmpty(password))){return res.status(400).send({stauts:false, message:"password is required"})}
     
-        /*------------------------Checking mail is unique or not-----------------------------------*/
+        /*------------------------Checking mail or password is unique or not-----------------------------------*/
         const uniqueEmail = await userModel.find({email:email})
         if(!uniqueEmail){return res.status(400).send({status : false, message : "email is already exit"})} 
+        const uniquePassword = await userModel.find({password:password})
+        if(!uniquePassword){return res.status(400).send({status : false, message : "password is already exit"})} 
     
         /*-------------------------------  Validation(Regex)  -----------------------------------*/
         if(!(isValidTitle(title))){return res.status(400).send({status : false, msg : "Please enter correct title ex: Mr, Mrs, Miss"})}
@@ -36,8 +38,9 @@ const createUser = async function(req,res){
         if(!(isValidMail(email))){return res.status(400).send({status : false, msg : "Invalid email Id"})}
         if(!(isValidFullName(name))){return res.status(400).send({status : false, msg : "Please provide valid full name"})}
         if(!(isValidPassword(password))){return res.status(400).send({status : false, msg : "Invalid password"})}
-        const createUser = await userModel.create(data)
-        return res.status(201).send({stauts:true, message:"Success", data:createUser})
+        
+        const createData = await userModel.create(data)
+        return res.status(201).send({stauts:true, message:"Success", data:createData})
     }
     catch(err){
         return res.status(500).send({status:false, message:err.message})
