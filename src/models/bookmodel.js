@@ -1,58 +1,54 @@
-const mongoose = require("mongoose");
-const moment = require("moment");
-const ObjectId = mongoose.Schema.Types.ObjectId;
+const mongoose = require("mongoose")
+const ObjectId = mongoose.Schema.Types.ObjectId
 
-const bookSchema = new mongoose.Schema({
+
+const booksSchema = new mongoose.Schema({
+
     title: {
-        type:String,
-        required:true,
-        unique:true,
-        trim:true
+        type: String,
+        required: "Title is required",
+        unique: "Title should be unique"
     },
     excerpt: {
-        type:String,
-        required:true,
-        trim:true
-    }, 
+        type: String,
+        required: "The excerpt is required"
+    },
     userId: {
-        type:ObjectId,
-        ref:"user",
-        required:true,
+        type: ObjectId,
+        required: "User Id is mandatory",
+        ref: 'User'
     },
     ISBN: {
-        type:String,
-        required:true,
-        unique:true,
-        trim:true
+        type: String,
+        required: "ISBN is required",
+        unique: "ISBN should be unique"
     },
     category: {
-        type:String,
-        required:true,
-        trim:true
+        type: String,
+        required: "Category is required"
     },
     subcategory: {
-        type:[String],
-        required:true,
-        trim:true
+        type: String,
+        required: "Subcategory is required"
     },
     reviews: {
-        type:Number,
-        default: 0, 
-        comment:{type:Number}
-    },
-    isDeleted: {
-        type:Boolean, 
-        default: false
+        type: Number,
+        default: 0,
+        comment: "Holds number of reviews of this book"
     },
     deletedAt: {
-        type:Date
-    }, 
-    releasedAt: {
-        type:String,
-        required:true
-        
+        type: Date,
+        default: null,
     },
-},{timestamps:true})
+    isDeleted: {
+        type: Boolean,
+        default: false
+    },
+    releasedAt: {
+        type: String,
+        required: true
+    }
 
+}, { timestamps: true })
 
-module.exports = mongoose.model("book",bookSchema)
+module.exports = mongoose.model("Book", booksSchema)
