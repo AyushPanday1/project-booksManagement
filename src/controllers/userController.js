@@ -45,7 +45,6 @@ const createUser = async function(req,res){
     }
 }
 
-const userModel = require("../models/userModel");
 
 const login = async function (req, res) {
     try {

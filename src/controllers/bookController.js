@@ -1,8 +1,5 @@
 const bookModel = require("../models/bookmodel")
-const mongoose = require("mongoose")
-const userModel = require("../models/userModel");
 const {isEmpty} = require("../validation/validation")
-
 
 
 const createBook = async function (req, res) {
@@ -66,7 +63,7 @@ const createBook = async function (req, res) {
         catch (err) {
             return res.status(500).send({ status: false, message: err.message })
         }
-    }
+}
 
     
 
