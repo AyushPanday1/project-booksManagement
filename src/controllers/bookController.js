@@ -3,20 +3,7 @@ const mongoose = require("mongoose")
 const userModel = require("../models/userModel");
 const {isEmpty} = require("../validation/validation")
 
-const isValid = function (value) {
-    if (typeof value === "undefined" || typeof value === null) return false
-    if (typeof value === "String" && typeof value.trim().length === 0) return false
-    return true;
-}
 
-const isValidObjectId = function (objectId) {
-    //     return /^[0-9a-fA-F]{24}$/.test(objectId)
-    return mongoose.Types.ObjectId.isValid(objectId)
-}
-
-const isValidRequestBody = function (requestBody) {
-    return Object.keys(requestBody).length > 0
-}
 
 const createBook = async function (req, res) {
     try {
