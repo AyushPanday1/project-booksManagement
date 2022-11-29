@@ -14,8 +14,8 @@ const createBook = async function (req, res) {
     
 
          // IF VALUES ARE NOT IN BODY.--------------------------------
-         if(!title)
-         return res.status(400).send({stauts:false, message:"title is required"})
+        //   if(!title)
+        //  return res.status(400).send({stauts:false, message:"title is required"})
 
          if(!excerpt)
          return res.status(400).send({stauts:false, message:"excerpt is required"})

@@ -9,6 +9,6 @@ router.get("/books", bookController.allBooks);
 router.post("/createbook" , bookController.createBook)
 
 
-console.log("1")
+//console.log("1")
 
 module.exports = router

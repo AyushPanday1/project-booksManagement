@@ -69,11 +69,11 @@ const login = async function (req, res) {
         if (!passMatch) return res.status(400).send({ status: false, message: "Password is incorrect" })
 
         const token = jwt.sign({
-            userId: mailMatch._id.toString(), iat: new Date().getTime() / 1000,
+            userId: mailMatch._id.toString()  //iat: new Date().getTime() / 1000,
         }, "Secret-Key", { expiresIn: "30m" });
 
         res.setHeader("x-api-key", "token");
-        return res.status(200).send({ status: true, message: "You are successfully logged in", token })
+        return res.status(201).send({ status: true, message: "You are successfully logged in", token })
 
     }
     catch (error) {
