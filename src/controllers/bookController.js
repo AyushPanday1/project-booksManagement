@@ -114,7 +114,6 @@ const updatebook = async function (req, res) {
         if (!isValidObjectId(id)) return res.status(400).send({ stauts: false, message: "userId is invalid" })
 
         const data = req.body;
-        const { title, excerpt, releasedAt, ISBN } = data;
 
         if(Object.keys(data).length==0 || Object.keys(data).length>4 ) 
         return res.status(400).send({status:false , message:"Please pass proper data to update. "})
