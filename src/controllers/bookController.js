@@ -125,10 +125,14 @@ const updatebook = async function (req, res) {
         if(findinDB.isDeleted==true)
         return res.status(400).send({status:false , message:"This book has been deleted"})
 
-        if(findinDB.title==data.title)
+        const duplicateTitle = await bookModel.find({title:data.title})
+
+        if(duplicateTitle)
         return res.status(400).send({status:false , message:"Title is registered already so please put another title"})
 
-        if(findinDB.ISBN==data.ISBN)
+        
+        const duplicateISBN = await bookModel.find({ISBN:data.ISBN})
+        if(duplicateISBN)
         return res.status(400).send({status:false , message:"ISBN is registered already so please put another ISBN"})
 
         const updatedBooks = await bookModel.findOneAndUpdate({ _id: id }, { $set: { title: data.title, excerpt: data.excerpt, releasedAt: data.releasedAt, ISBN: data.ISBN } }, { new: true })
