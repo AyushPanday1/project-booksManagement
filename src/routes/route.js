@@ -3,6 +3,7 @@ const router = express.Router()
 const userController = require("../controllers/userController");
 const bookController = require("../controllers/bookController")
 const middleware = require('../middleware/auth')
+const reviewController = require("../controllers/reviewController")
 
 /*------------------------Create User-----------------------------------*/
 router.post("/register", userController.createUser);
@@ -15,6 +16,14 @@ router.post("/createbook" , middleware.authenticate ,bookController.createBook)
 
 /*------------------------Fetch Books-----------------------------------*/
 router.get("/books", bookController.allBooks);
+
+router.get("/books", bookController.allBooks);
+
+router.get("/books/:bookId", bookController.getBooksById);
+
+router.put("/books/:bookId" , bookController.updatebook);
+
+router.post("/books/:bookId/review", reviewController.createReview);
 
 /*---------------------------Hit On Wrong Url --------------------------------*/
 router.all("/*", function(req, res){
