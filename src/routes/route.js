@@ -24,6 +24,8 @@ router.get("/books/:bookId", bookController.getBooksById);
 router.put("/books/:bookId" , bookController.updatebook);
 
 router.post("/books/:bookId/review", reviewController.createReview);
+//UPDATE BOOKS-----------------------------------------------------------
+router.put("/books/:bookId" , bookController.updatebook)
 
 /*---------------------------Hit On Wrong Url --------------------------------*/
 router.all("/*", function(req, res){
