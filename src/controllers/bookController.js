@@ -141,7 +141,33 @@ const updatebook = async function (req, res) {
     }
 }
 
-module.exports = {allBooks , createBook, getBooksById, updatebook};
+
+const deleteBook = async function(req, res){
+    try{
+
+        const bookId = req.params.bookId
+    
+        if(!bookId){return res.status(400).send({status:true, message:"bookId is required"})}
+    
+        if(!isValidObjectId(bookId)){return res.status(400).send({status:false, message:"Invalid bookId"})}
+    
+        const bookDetails = await bookModel.findById(bookId)
+        if(!bookDetails){return res.status(404).send({status:false, message:"book with this id is not present in our DB"})}
+    
+        if(bookDetails.isDeleted == true){return res.status(404).send({status:false, message:"book is already deleted"})}
+    
+        let today = moment().format("YYYY-MM-DD", "hh-mm-ss a")
+        const flagDelete = await bookModel.findOneAndUpdate({_id:bookId}, {$set:{isDeleted:true, deletedAt:today}}, {new:true})
+    
+        return res.status(200).send({status:true, message:"Success", data:flagDelete})
+    }
+    catch(err){
+        return res.status(500).send({status:false, message:err.message})
+    }
+
+}
+
+module.exports = {allBooks , createBook, getBooksById, updatebook , deleteBook};
 
 
 
