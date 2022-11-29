@@ -16,6 +16,12 @@ router.post("/createbook" , middleware.authenticate ,bookController.createBook)
 /*------------------------Fetch Books-----------------------------------*/
 router.get("/books", bookController.allBooks);
 
+/*------------------------Fetch Books by bookId(path params)-----------------------------------*/
+router.get("//books/:bookId", bookController.getBooksById);
+
+/*------------------------delete Book-----------------------------------*/
+router.delete("/books/:bookId", bookController.deleteBook);
+
 /*---------------------------Hit On Wrong Url --------------------------------*/
 router.all("/*", function(req, res){
     return res.status(404).send({status:false, message : "Provided route url is wrong"})
