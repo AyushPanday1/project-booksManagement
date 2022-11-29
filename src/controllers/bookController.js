@@ -8,31 +8,31 @@ const moment = require('moment')
 const createBook = async function (req, res) {
     try {
         let data = req.body
-        const { title, excerpt, userId, ISBN, category, subcategory, releasedAt ,reviews } = data
+        const { title, excerpt, userId, ISBN, category, subcategory, releasedAt, reviews } = data
 
         // IF BODY IS EMPTY.------------------------------------------
-         if(Object.keys(data).length==0)
-         return res.status(400).send({status:false, message:"Please provide data in request body"})
-    
-         // IF VALUES ARE NOT IN BODY.--------------------------------
-         if(!title)return res.status(400).send({stauts:false, message:"title is required"})
-         if(!excerpt)return res.status(400).send({stauts:false, message:"excerpt is required"})
-         if(!userId)return res.status(400).send({stauts:false, message:"userId is required"})
-         if(!ISBN)return res.status(400).send({stauts:false, message:"ISBN is required"})
-         if(!category)return res.status(400).send({stauts:false, message:"category is required"})
-         if(!subcategory)return res.status(400).send({stauts:false, message:"subcategory is required"})
-         if(!releasedAt)return res.status(400).send({stauts:false, message:"releasedAt is required"})
-         
-         /*------------------------Mongoose Id Validation-----------------------------------*/
-         if(!isValidObjectId(userId))return res.status(400).send({stauts:false, message:"userId is invalid"})
- 
-          // IF VALUES ARE EMPTY BY INFO.-------------------------------------
-          if(!(isEmpty(title)))return res.status(400).send({stauts:false, message:"title is empty"})
-          if(!(isEmpty(excerpt)))return res.status(400).send({stauts:false, message:"excerpt is empty"})
-          if(!(isEmpty(ISBN)))return res.status(400).send({stauts:false, message:"ISBN is empty"})
-          if(!(isEmpty(category)))return res.status(400).send({stauts:false, message:"category is empty"})
-          if(!(isEmpty(subcategory)))return res.status(400).send({stauts:false, message:"subcategory is empty"})
-          if(!(isEmpty(releasedAt)))return res.status(400).send({stauts:false, message:"releasedAt is empty"})
+        if (Object.keys(data).length == 0)
+            return res.status(400).send({ status: false, message: "Please provide data in request body" })
+
+        // IF VALUES ARE NOT IN BODY.--------------------------------
+        if (!title) return res.status(400).send({ stauts: false, message: "title is required" })
+        if (!excerpt) return res.status(400).send({ stauts: false, message: "excerpt is required" })
+        if (!userId) return res.status(400).send({ stauts: false, message: "userId is required" })
+        if (!ISBN) return res.status(400).send({ stauts: false, message: "ISBN is required" })
+        if (!category) return res.status(400).send({ stauts: false, message: "category is required" })
+        if (!subcategory) return res.status(400).send({ stauts: false, message: "subcategory is required" })
+        if (!releasedAt) return res.status(400).send({ stauts: false, message: "releasedAt is required" })
+
+        /*------------------------Mongoose Id Validation-----------------------------------*/
+        if (!isValidObjectId(userId)) return res.status(400).send({ stauts: false, message: "userId is invalid" })
+
+        // IF VALUES ARE EMPTY BY INFO.-------------------------------------
+        if (!(isEmpty(title))) return res.status(400).send({ stauts: false, message: "title is empty" })
+        if (!(isEmpty(excerpt))) return res.status(400).send({ stauts: false, message: "excerpt is empty" })
+        if (!(isEmpty(ISBN))) return res.status(400).send({ stauts: false, message: "ISBN is empty" })
+        if (!(isEmpty(category))) return res.status(400).send({ stauts: false, message: "category is empty" })
+        if (!(isEmpty(subcategory))) return res.status(400).send({ stauts: false, message: "subcategory is empty" })
+        if (!(isEmpty(releasedAt))) return res.status(400).send({ stauts: false, message: "releasedAt is empty" })
 
           /*------------------------Checking title is unique or not-----------------------------------*/
           const findbook = await bookModel.findOne({title:data.title})
