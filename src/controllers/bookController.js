@@ -141,7 +141,7 @@ const updatebook = async function (req, res) {
     }
 }
 
-module.exports = {allBooks , createBook, allBooks, getBooksById, updatebook};
+module.exports = {allBooks , createBook, getBooksById, updatebook};
 
 
 
