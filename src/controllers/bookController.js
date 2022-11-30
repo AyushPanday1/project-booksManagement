@@ -1,7 +1,8 @@
 const { isValidObjectId } = require("mongoose")
-const bookModel = require("../models/bookModel")
+const bookModel = require("../models/bookmodel")
 const userModel = require("../models/userModel")
 const {isEmpty} = require("../validation/validation")
+const reviewModel = require("../models/reviewModel")
 const moment = require('moment')
 
 
@@ -22,8 +23,6 @@ const createBook = async function (req, res) {
         if (!category) return res.status(400).send({ stauts: false, message: "category is required" })
         if (!subcategory) return res.status(400).send({ stauts: false, message: "subcategory is required" })
         if (!releasedAt) return res.status(400).send({ stauts: false, message: "releasedAt is required" })
-
-        /*------------------------Mongoose Id Validation-----------------------------------*/
         if (!isValidObjectId(userId)) return res.status(400).send({ stauts: false, message: "userId is invalid" })
 
         // IF VALUES ARE EMPTY BY INFO.-------------------------------------
@@ -104,8 +103,16 @@ const getBooksById = async function(req, res) {
         if (!isBookPresent) return res.status(404).send({ Status: false, message: "No Data found" })
 
         if (isBookPresent.isDeleted == true) return res.status(404).send({ Status: false, msg: "Book is already deleted." })
+
+        let { _id, title, excerpt, userId, ISBN, category, subcategory, isDeleted, releasedAt, createdAt, updatedAt } = isBookPresent;
+
+        let totalReviews = await reviewModel.find({bookId: bookId}).select({_id:1, bookId:1, reviewedBy:1, reviewedAt:1, rating:1, review:1})
+
+        let obj = { _id, title, excerpt, userId, ISBN, category, subcategory, isDeleted, reviews: totalReviews.length, releasedAt, createdAt, updatedAt, reviewsData: totalReviews, }
+
+        if (totalReviews.bookId == bookId) { return  res.status(200).send({status: true, message: "success", data: obj})}
       
-        res.status(200).send({status: true, message: "success", data: isBookPresent})
+        res.status(200).send({status: true, message: "success", data: obj})
     } catch (err) {
         res.status(500).send({ status: false, message: err.message })
     }
@@ -118,8 +125,6 @@ const updatebook = async function (req, res) {
         if (!isValidObjectId(id)) return res.status(400).send({ stauts: false, message: "userId is invalid" })
 
         const data = req.body;
-        // const { title, excerpt, releasedAt, ISBN } = data;
-
         if(Object.keys(data).length==0 || Object.keys(data).length>4 ) 
         return res.status(400).send({status:false , message:"Please pass proper data to update. "})
         
@@ -130,13 +135,19 @@ const updatebook = async function (req, res) {
         if(findinDB.isDeleted==true)
         return res.status(400).send({status:false , message:"This book has been deleted"})
 
-        if(findinDB.title==data.title)
+        const duplicateTitle = await bookModel.find({title:data.title})
+
+        if(duplicateTitle)
         return res.status(400).send({status:false , message:"Title is registered already so please put another title"})
 
-        if(findinDB.ISBN==data.ISBN)
+        
+        const duplicateISBN = await bookModel.find({ISBN:data.ISBN})
+        if(duplicateISBN)
         return res.status(400).send({status:false , message:"ISBN is registered already so please put another ISBN"})
 
         const updatedBooks = await bookModel.findOneAndUpdate({ _id: id }, { $set: { title: data.title, excerpt: data.excerpt, releasedAt: data.releasedAt, ISBN: data.ISBN } }, { new: true })
+
+
         return res.status(200).send({ status: true, message: "Success", data: updatedBooks })
 
     }
@@ -170,8 +181,7 @@ const deleteBook = async function(req, res){
 
 }
 
-module.exports = {createBook, deleteBook, allBooks, getBooksById, updatebook};
-
+module.exports = {allBooks , createBook, getBooksById, updatebook , deleteBook};
 
 
 

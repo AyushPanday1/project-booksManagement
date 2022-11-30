@@ -3,6 +3,7 @@ const router = express.Router()
 const userController = require("../controllers/userController");
 const bookController = require("../controllers/bookController")
 const middleware = require('../middleware/auth')
+const reviewController = require("../controllers/reviewController")
 
 /*------------------------Create User-----------------------------------*/
 router.post("/register", userController.createUser);
@@ -16,14 +17,21 @@ router.post("/createbook" , middleware.authenticate ,bookController.createBook)
 /*------------------------Fetch Books-----------------------------------*/
 router.get("/books", middleware.authenticate, bookController.allBooks);
 
-/*------------------------Fetch Books by bookId(path params)-----------------------------------*/
-router.get("/books/:bookId", middleware.authenticate ,bookController.getBooksById);
+/*------------------------Fetch Books(patm params)-----------------------------------*/
+router.get("/books/:bookId", middleware.authenticate, bookController.getBooksById);
 
-/*------------------------update Book by bookId(path params)-----------------------------------*/
-router.put("/books/:bookId", middleware.authenticate, middleware.authorization, bookController.updatebook);
 
-/*------------------------delete Book-----------------------------------*/
-router.delete("/books/:bookId", middleware.authenticate, middleware.authorization, bookController.deleteBook);
+//UPDATE BOOKS-----------------------------------------------------------
+router.put("/books/:bookId" , middleware.authenticate, middleware.authorization, bookController.updatebook)
+
+/*-----------------------delete Book-----------------------------------*/
+router.delete("/books/:bookId", middleware.authenticate, middleware.authorization ,bookController.deleteBook);
+
+router.post("/books/:bookId/review", reviewController.createReview);
+
+router.put("/books/:bookId/review/:reviewId", reviewController.updateReview);
+
+router.delete("/books/:bookId/review/:reviewId", reviewController.deleteReview);
 
 /*---------------------------Hit On Wrong Url --------------------------------*/
 router.all("/*", function(req, res){

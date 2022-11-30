@@ -33,4 +33,14 @@ const isEmpty = function(value){
     return true
 }
 
-module.exports = {isEmpty, isValidTitle, isValidPhone, isValidMail, isValidFullName, isValidPassword}
+const isValidDate = function(Date){
+    const regex = /^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/
+    return regex.test(Date)
+}
+
+const isValidNumber = function(Number){
+    const regex = /^[0-9]*$/
+    return regex.test(Number)
+}
+
+module.exports = {isEmpty, isValidTitle, isValidPhone, isValidMail, isValidFullName, isValidPassword, isValidDate, isValidNumber}
