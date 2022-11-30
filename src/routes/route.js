@@ -23,14 +23,17 @@ router.get("/books/:bookId", bookController.getBooksById);
 
 router.put("/books/:bookId" , bookController.updatebook);
 
-router.post("/books/:bookId/review", reviewController.createReview);
-
-
 //UPDATE BOOKS-----------------------------------------------------------
 router.put("/books/:bookId" , bookController.updatebook)
 
 /*-----------------------delete Book-----------------------------------*/
 router.delete("/books/:bookId", bookController.deleteBook);
+
+router.post("/books/:bookId/review", reviewController.createReview);
+
+router.put("/books/:bookId/review/:reviewId", reviewController.updateReview);
+
+router.delete("/books/:bookId/review/:reviewId", reviewController.deleteReview);
 
 /*---------------------------Hit On Wrong Url --------------------------------*/
 router.all("/*", function(req, res){
