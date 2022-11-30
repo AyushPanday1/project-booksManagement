@@ -68,8 +68,9 @@ const updateReview = async function (req, res) {
         /*.................If body is empty..............................*/
         if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "Data is required." })
 
-        /*................If rating is not correct.......................*/
-        if (!(isValidNumber(rating))) return res.status(400).send({ status: false, msg: "Please provide valid rating" })
+        /*................Checking validity of fields....................*/
+        if (!(isValidNumber(data.rating))) return res.status(400).send({ status: false, msg: "Please provide valid rating" })
+        if (!(isValidFullName(data.reviewedBy))) return res.status(400).send({ status: false, msg: "Please provide valid name" })
 
         /*.................Checking if book data is present in DB.......*/
         let bookData = await bookModel.findById(bookId)
