@@ -27,10 +27,13 @@ router.put("/books/:bookId" , middleware.authenticate, middleware.authorization,
 /*-----------------------delete Book-----------------------------------*/
 router.delete("/books/:bookId", middleware.authenticate, middleware.authorization ,bookController.deleteBook);
 
+/*------------------------Create Review-----------------------------------*/
 router.post("/books/:bookId/review", reviewController.createReview);
 
+/*------------------------Update Review----------------------------------*/
 router.put("/books/:bookId/review/:reviewId", reviewController.updateReview);
 
+/*------------------------Delete Review----------------------------------*/
 router.delete("/books/:bookId/review/:reviewId", reviewController.deleteReview);
 
 /*---------------------------Hit On Wrong Url --------------------------------*/
