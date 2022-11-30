@@ -14,13 +14,16 @@ router.post("/login", userController.login);
 router.post("/createbook" , middleware.authenticate ,bookController.createBook)
 
 /*------------------------Fetch Books-----------------------------------*/
-router.get("/books", bookController.allBooks);
+router.get("/books", middleware.authenticate, bookController.allBooks);
 
 /*------------------------Fetch Books by bookId(path params)-----------------------------------*/
-router.get("//books/:bookId", bookController.getBooksById);
+router.get("/books/:bookId", middleware.authenticate ,bookController.getBooksById);
+
+/*------------------------update Book by bookId(path params)-----------------------------------*/
+router.put("/books/:bookId", middleware.authenticate, middleware.authorization, bookController.updatebook);
 
 /*------------------------delete Book-----------------------------------*/
-router.delete("/books/:bookId", bookController.deleteBook);
+router.delete("/books/:bookId", middleware.authenticate, middleware.authorization, bookController.deleteBook);
 
 /*---------------------------Hit On Wrong Url --------------------------------*/
 router.all("/*", function(req, res){
