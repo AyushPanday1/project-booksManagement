@@ -5,38 +5,38 @@ const bookController = require("../controllers/bookController")
 const middleware = require('../middleware/auth')
 const reviewController = require("../controllers/reviewController")
 
-/*------------------------Create User-----------------------------------*/
+/*------------------------Create User----------------------------------*/
 router.post("/register", userController.createUser);
 
 /*------------------------User Login-----------------------------------*/
 router.post("/login", userController.login);
 
-/*---------------------------Book Create --------------------------------*/
+/*---------------------------Book Create ------------------------------*/
 router.post("/createbook" , middleware.authenticate ,bookController.createBook)
 
-/*------------------------Fetch Books-----------------------------------*/
+/*------------------------Fetch Books----------------------------------*/
 router.get("/books", middleware.authenticate, bookController.allBooks);
 
-/*------------------------Fetch Books(patm params)-----------------------------------*/
+/*------------------------Fetch Books(path params)---------------------*/
 router.get("/books/:bookId", middleware.authenticate, bookController.getBooksById);
 
 
-//UPDATE BOOKS-----------------------------------------------------------
+/*-------------------------UPDATE BOOKS--------------------------------*/
 router.put("/books/:bookId" , middleware.authenticate, middleware.authorization, bookController.updatebook)
 
 /*-----------------------delete Book-----------------------------------*/
 router.delete("/books/:bookId", middleware.authenticate, middleware.authorization ,bookController.deleteBook);
 
-/*------------------------Create Review-----------------------------------*/
+/*------------------------Create Review--------------------------------*/
 router.post("/books/:bookId/review", reviewController.createReview);
 
-/*------------------------Update Review----------------------------------*/
+/*------------------------Update Review--------------------------------*/
 router.put("/books/:bookId/review/:reviewId", reviewController.updateReview);
 
-/*------------------------Delete Review----------------------------------*/
+/*------------------------Delete Review--------------------------------*/
 router.delete("/books/:bookId/review/:reviewId", reviewController.deleteReview);
 
-/*---------------------------Hit On Wrong Url --------------------------------*/
+/*---------------------------Hit On Wrong Url -------------------------*/
 router.all("/*", function(req, res){
     return res.status(404).send({status:false, message : "Provided route url is wrong"})
 })
