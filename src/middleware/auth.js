@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken')
+const bookModel = require('../models/bookModel')
+const {isValidObjectId} = require('mongoose')
 
 const authenticate = async function(req, res, next){
     try{
@@ -19,4 +21,24 @@ const authenticate = async function(req, res, next){
     }
 }
 
+const authorization = async function(req, res ,next){
+    try{
+        let bookId = req.params.bookId
+    
+        if(!isValidObjectId(bookId)){return res.status(400).send({status:false, message:"Invalid Id"})}
+    
+        let book = await bookModel.findById(bookId)
+    
+        if(!book){return res.status(404).send({status:false, message:"book Id is not present in DB"})}
+    
+        if(book.userId != req.tokenVerify.userId){return res.status(403).send({status:false, message:"you are unauthorized to make changes"})}
+    
+        next()
+    }
+    catch(err){
+        return res.status(500).send({status:false, message:err.message})
+    }
+}
+
 module.exports.authenticate = authenticate
+module.exports.authorization = authorization

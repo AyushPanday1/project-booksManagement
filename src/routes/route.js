@@ -15,22 +15,26 @@ router.post("/login", userController.login);
 router.post("/createbook" , middleware.authenticate ,bookController.createBook)
 
 /*------------------------Fetch Books-----------------------------------*/
-router.get("/books", bookController.allBooks);
+router.get("/books", middleware.authenticate, bookController.allBooks);
 
-router.get("/books", bookController.allBooks);
-
-router.get("/books/:bookId", bookController.getBooksById);
-
-router.put("/books/:bookId" , bookController.updatebook);
-
-router.post("/books/:bookId/review", reviewController.createReview);
+/*------------------------Fetch Books(patm params)-----------------------------------*/
+router.get("/books/:bookId", middleware.authenticate, bookController.getBooksById);
 
 
 //UPDATE BOOKS-----------------------------------------------------------
-router.put("/books/:bookId" , bookController.updatebook)
+router.put("/books/:bookId" , middleware.authenticate, middleware.authorization, bookController.updatebook)
 
 /*-----------------------delete Book-----------------------------------*/
-router.delete("/books/:bookId", bookController.deleteBook);
+router.delete("/books/:bookId", middleware.authenticate, middleware.authorization ,bookController.deleteBook);
+
+/*------------------------Create Review-----------------------------------*/
+router.post("/books/:bookId/review", reviewController.createReview);
+
+/*------------------------Update Review----------------------------------*/
+router.put("/books/:bookId/review/:reviewId", reviewController.updateReview);
+
+/*------------------------Delete Review----------------------------------*/
+router.delete("/books/:bookId/review/:reviewId", reviewController.deleteReview);
 
 /*---------------------------Hit On Wrong Url --------------------------------*/
 router.all("/*", function(req, res){

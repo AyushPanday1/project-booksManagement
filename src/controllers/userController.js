@@ -8,7 +8,7 @@ const createUser = async function(req,res){
     try{
 
         const data = req.body
-        const {title, name, phone, email, password, } = data
+        const {title, name, phone, email, password} = data
     
         /*------------------------Checking body is empty or not-----------------------------------*/
         if(Object.keys(data).length==0){return res.status(400).send({status:false, message:"Please provide data in request body"})}
