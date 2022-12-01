@@ -92,12 +92,12 @@ const allBooks = async function (req, res) {
         if (userId) {
             if (!isValidObjectId(userId)) return res.status(400).send({ stauts: false, message: "userId is invalid" })
         }
-
+        
         //SELECTING ONLY THE WANTED DATA.---------------------------------------------------------------------------------
         let data = await bookModel.find(findObj).select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, reviews: 1, releasedAt: 1 })
-
+        
         if (data.length == 0) return res.status(404).send({ Status: false, message: 'No Data Found' })
-
+        
         //SORTING THE DATA ACCORDINGLY TO ALPHABETICAL ORDER OF TITLE.----------------------------------------------------
         data.sort((a, b) => a.title > b.title ? 1 : -1)
 
@@ -125,12 +125,12 @@ const getBooksById = async function (req, res) {
             return res.status(404).send({ Status: false, msg: "Book is already deleted." })
 
         //DESTRUCTURING HERE.------------------------------------------------------------------------------------
-        let { _id, title, excerpt, userId, ISBN, category, subcategory, isDeleted, reviews, releasedAt, createdAt, updatedAt } = isBookPresent;
+        let { _id, title, excerpt, userId, ISBN, category, subcategory, isDeleted, releasedAt, createdAt, updatedAt } = isBookPresent;
 
         let totalReviews = await reviewModel.find({ bookId: bookId, isDeleted: false }).select({ _id: 1, bookId: 1, reviewedBy: 1, reviewedAt: 1, rating: 1, review: 1 })
 
         //ADDING TOTALREVIEWS IN REVIEWSDATA HERE.---------------------------------------------------------------
-        let obj = { _id, title, excerpt, userId, ISBN, category, subcategory, isDeleted, reviews, releasedAt, createdAt, updatedAt, reviewsData: totalReviews }
+        let obj = { _id, title, excerpt, userId, ISBN, category, subcategory, isDeleted, reviews: totalReviews.length, releasedAt, createdAt, updatedAt, reviewsData: totalReviews }
 
         res.status(200).send({ status: true, message: "success", data: obj })
     } catch (err) {

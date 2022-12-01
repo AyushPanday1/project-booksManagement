@@ -128,9 +128,9 @@ const deleteReview = async function (req, res) {
         /*..................Updating isDeleted to true..................*/
         await reviewModel.findOneAndUpdate({ _id: reviewId, isDeleted: false }, { $set: { isDeleted: true } })
         /*..................Fetching all the reviews present...........*/
-        const totalReviews = await reviewModel.find({ bookId: bookId })
+        const totalReviews = await reviewModel.find({ bookId: bookId, isDeleted: false })
         /*..................Decreasing the review count by 1..........*/
-        await bookModel.findByIdAndUpdate(bookId, { $set: { reviews: totalReviews.length - 1 } })
+        await bookModel.findByIdAndUpdate(bookId, { $set: { reviews: totalReviews.length } })
         /*..................Sending response with message.............*/
         return res.status(200).send({ status: true, message: "Data deleted successfully" })
 
