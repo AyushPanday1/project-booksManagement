@@ -17,7 +17,6 @@ const createReview = async function (req, res) {
 
         /*.................Checking validity of fields.................*/
         let { reviewedBy, rating, review } = req.body;
-        if (!rating) return res.status(400).send({ status: false, message: "Rating is mandatory" })
         if (!(isValidFullName(reviewedBy))) return res.status(400).send({ status: false, msg: "Please provide valid name" })
         if (!(isValidNumber(rating))) return res.status(400).send({ status: false, msg: "Please provide valid rating" })
        
