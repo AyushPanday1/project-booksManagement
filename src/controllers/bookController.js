@@ -116,21 +116,16 @@ const getBooksById = async function (req, res) {
         //CHECKING IF USER ID VALID OR NOT.---------------------------------------------------------------------
         if (!isValidObjectId(bookId)) return res.status(400).send({ stauts: false, message: "bookId is invalid" })
 
-        let isBookPresent = await bookModel.findOne({ _id: bookId })
+        let bookData = await bookModel.findOne({ _id: bookId, isDeleted:false}).select({ISBN:0})
 
-        if (!isBookPresent)
+        if (!bookData)
             return res.status(404).send({ Status: false, message: "No Data found" })
-
-        if (isBookPresent.isDeleted == true)
-            return res.status(404).send({ Status: false, msg: "Book is already deleted." })
-
-        //DESTRUCTURING HERE.------------------------------------------------------------------------------------
-        let { _id, title, excerpt, userId, ISBN, category, subcategory, isDeleted, releasedAt, createdAt, updatedAt } = isBookPresent;
 
         let totalReviews = await reviewModel.find({ bookId: bookId, isDeleted: false }).select({ _id: 1, bookId: 1, reviewedBy: 1, reviewedAt: 1, rating: 1, review: 1 })
 
         //ADDING TOTALREVIEWS IN REVIEWSDATA HERE.---------------------------------------------------------------
-        let obj = { _id, title, excerpt, userId, ISBN, category, subcategory, isDeleted, reviews: totalReviews.length, releasedAt, createdAt, updatedAt, reviewsData: totalReviews }
+        let obj = { _id:bookData._id, title:bookData.title, excerpt:bookData.excerpt, userId:bookData.userId, category:bookData.category, subcategory:bookData.subcategory, isDeleted:bookData.isDeleted, reviews: totalReviews.length, releasedAt:bookData.releasedAt, createdAt:bookData.createdAt, 
+        updatedAt:bookData.updatedAt, reviewsData: totalReviews}
 
         res.status(200).send({ status: true, message: "success", data: obj })
     } catch (err) {
