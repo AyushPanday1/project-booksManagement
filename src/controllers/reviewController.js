@@ -2,7 +2,7 @@ const reviewModel = require("../models/reviewModel");
 const bookModel = require("../models/bookModel");
 const mongoose = require("mongoose");
 const validation = require('../validation/validation');
-const { isValidFullName, isValidNumber } = validation
+const { isValidFullName, isValidRating } = validation
 const { isValidObjectId } = require("mongoose")
 const moment = require("moment")
 
@@ -15,10 +15,13 @@ const createReview = async function (req, res) {
         /*.................Checking if valid bookId.....................*/
         if (!mongoose.Types.ObjectId.isValid(bookId)) return res.status(400).send({ Status: false, message: "Invalid Book Id" })
 
+        /*.................If body is empty..............................*/
+        if (Object.keys(req.body).length == 0) return res.status(400).send({ status: false, message: "Data is required." })
+        
         /*.................Checking validity of fields.................*/
         let { reviewedBy, rating, review } = req.body;
         if (!(isValidFullName(reviewedBy))) return res.status(400).send({ status: false, msg: "Please provide valid name" })
-        if (!(isValidNumber(rating))) return res.status(400).send({ status: false, msg: "Please provide valid rating" })
+        if (!(isValidRating(rating))) return res.status(400).send({ status: false, msg: "Please provide valid rating" })
        
         /*.................Checking if book data is present in DB.....*/
         let bookData = await bookModel.findById(bookId);
@@ -68,7 +71,7 @@ const updateReview = async function (req, res) {
         if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "Data is required." })
 
         /*................Checking validity of fields....................*/
-        if (!(isValidNumber(data.rating))) return res.status(400).send({ status: false, msg: "Please provide valid rating" })
+        if (!(isValidRating(data.rating))) return res.status(400).send({ status: false, msg: "Please provide valid rating" })
         if (!(isValidFullName(data.reviewedBy))) return res.status(400).send({ status: false, msg: "Please provide valid name" })
 
         /*.................Checking if book data is present in DB.......*/

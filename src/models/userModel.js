@@ -32,8 +32,8 @@ const userModel = new mongoose.Schema({
             type : String
         },
         pincode : {
-            type : String
-    }
+            type : String,
+        }
     }
 }, {timestamps:true})
 
