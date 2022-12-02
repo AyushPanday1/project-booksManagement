@@ -214,12 +214,11 @@ const deleteBook = async function (req, res) {
 
         //UPDATING IS DELETED WITH UPDATED DATE.---------------------------------------------------------
         const flagDelete = await bookModel.findOneAndUpdate({ _id: bookId },
-            {
-                $set: {
-                    isDeleted: true,
-                    deletedAt: today
-                }
-            },
+             { $set:  { 
+                   isDeleted: true, 
+                   deletedAt: today 
+                } 
+            }, 
             { new: true })
 
         return res.status(200).send({ status: true, message: "Success", data: flagDelete })
