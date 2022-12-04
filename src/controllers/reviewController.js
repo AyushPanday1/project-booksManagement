@@ -2,7 +2,7 @@ const reviewModel = require("../models/reviewModel");
 const bookModel = require("../models/bookModel");
 const mongoose = require("mongoose");
 const validation = require('../validation/validation');
-const { isValidFullName, isValidRating } = validation
+const { isValidRating, isEmpty } = validation
 const { isValidObjectId } = require("mongoose")
 const moment = require("moment")
 
@@ -13,34 +13,57 @@ const createReview = async function (req, res) {
         let bookId = req.params.bookId;
 
         /*.................Checking if valid bookId.....................*/
-        if (!mongoose.Types.ObjectId.isValid(bookId)) return res.status(400).send({ Status: false, message: "Invalid Book Id" })
+        if (!mongoose.Types.ObjectId.isValid(bookId)) return res.status(400).send({ status: false, message: "Invalid Book Id" })
 
-        /*.................Checking validity of fields.................*/
-        let { reviewedBy, rating, review } = req.body;
-        if (!(isValidFullName(reviewedBy))) return res.status(400).send({ status: false, msg: "Please provide valid name" })
-        if (!(isValidRating(rating))) return res.status(400).send({ status: false, msg: "Please provide valid rating" })
+        /*.................Getting data from request body..............*/
+        let data = req.body
 
-        /*.................Checking if book data is present in DB.....*/
-        let bookData = await bookModel.findOne({ _id: bookId, isDeleted: false }).select({ ISBN: 0 })
-        if (!bookData) return res.status(404).send({ status: false, message: "No data found" })
+        /*.................If body is empty..................... ......*/
+        if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "Data is required." })
+
+        /*................Destructuring body data....................*/
+        let { reviewedBy, rating } = data;
+
+        /*------------------------Checking fileds are present or not-----------------------------------*/
+        if (!rating) { return res.status(400).send({ status: false, message: "rating is required" }) }
+
+        /*------------------------Checking fileds values are empty or not-----------------------------------*/
+        if (!isEmpty(reviewedBy)) { return res.status(400).send({ status: false, message: "reviewedBy is Empty" }) }
+
+        /*-------------------------------Validation(Regex)  -----------------------------------*/
+        if (!isValidRating(rating)) { return res.status(400).send({ status: false, message: "rating is invalid. Please provide rating between 1 and 5" }) }
+
+        /*................Updating review count in bookData...........*/
+        let updateBookData = await bookModel.findOneAndUpdate({ _id: bookId, isDeleted: false }, { $inc: { reviews: 1 } }, { new: true }).select({ __v: 0 })
+
+        /*...............Checking if book data exist.................*/
+        if (!updateBookData) return res.status(404).send({ status: false, message: "No data found or data is deleted" })
 
         /*.................Using moment on reviewedAt.................*/
         let today = moment().format("YYYY-MM-DD", "hh-mm-ss a")
 
-        /*................Creating a review...........................*/
-        await reviewModel.create({ bookId: bookId, reviewedBy: reviewedBy, reviewedAt: today, rating: rating, review: review })
+        /*.........Adding bookId and reviewedAt to reviewData........*/
+        data.bookId = bookId
+        data.reviewedAt = today
 
-        /*................Fetching all the reviews which are present..*/
-        let totalReviews = await reviewModel.find({ bookId: bookId, isDeleted: false }).select({ _id: 1, bookId: 1, reviewedBy: 1, reviewedAt: 1, rating: 1, review: 1 })
+        /*...................Creating a review......................*/
+        let addReview = await reviewModel.create(data)
 
-        /*................Adding reviewsData key in bookData..........*/
-        let obj = { _id: bookData._id, title: bookData.title, excerpt: bookData.excerpt, userId: bookData.userId, category: bookData.category, subcategory: bookData.subcategory, isDeleted: bookData.isDeleted, reviews: totalReviews.length, releasedAt: bookData.releasedAt, createdAt: bookData.createdAt, updatedAt: bookData.updatedAt, reviewsData: totalReviews }
+        /*.............Adding wanted keys to review data..............*/
+        let reviewData = {
+            _id: addReview._id,
+            bookId: addReview.bookId,
+            reviewedBy: addReview.reviewedBy,
+            reviewedAt: addReview.reviewedAt,
+            rating: addReview.rating,
+            review: addReview.review
+        }
 
-        /*................Updating review count in bookData...........*/
-        await bookModel.findByIdAndUpdate(bookId, { $set: { reviews: totalReviews.length } })
+        /*................Adding reviewData in book...................*/
+        let bookWithReview = { ...updateBookData._doc, reviewsData: [reviewData] }
 
         /*................Returning bookData with reviews............*/
-        return res.status(200).send({ status: true, message: "Book list", data: obj })
+        return res.status(201).send({ status: true, message: "success", data: bookWithReview })
 
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message })
@@ -50,42 +73,52 @@ const createReview = async function (req, res) {
 const updateReview = async function (req, res) {
 
     try {
-        /*.................Getting bookId from params....................*/
-        const bookId = req.params.bookId
-        const reviewId = req.params.reviewId
+        /*............Getting Book Id and Review Id from params............*/
+        let bookId = req.params.bookId
+        let reviewId = req.params.reviewId
 
-        /*.................Checking if valid bookId......................*/
+        /*.................Checking if valid Book Id......................*/
         if (!isValidObjectId(bookId)) return res.status(400).send({ stauts: false, message: "userId is invalid" })
-        /*.................Checking if valid reviewId....................*/
-        if (!isValidObjectId(reviewId)) return res.status(400).send({ stauts: false, message: "reviewId is invalid" })
+        /*.................Checking if valid Review Id....................*/
+        if (!isValidObjectId(reviewId)) return res.status(400).send({ status: false, message: "reviewId is invalid" })
 
-        const data = req.body;
-        /*.................If body is empty..............................*/
+        /*.................Getting data from request body................*/
+        let data = req.body;
+
+        /*...................Destructuring body data.....................*/
+        let { reviewedBy, rating, review } = data
+
+        /*.................If body is empty.............................*/
         if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "Data is required." })
 
-        /*................Checking validity of fields....................*/
-        if (!(isValidNumber(data.rating))) return res.status(400).send({ status: false, msg: "Please provide valid rating" })
-        if (!(isValidFullName(data.reviewedBy))) return res.status(400).send({ status: false, msg: "Please provide valid name" })
+        /*------------------------Checking fileds values are empty or not-----------------------------------*/
+        if (!(isEmpty(reviewedBy))) return res.status(400).send({ status: false, message: "reviewedBy is Empty." })
 
-        /*.................Checking if book data is present in DB.......*/
-        let bookData = await bookModel.findOne({ _id: bookId, isDeleted: false }).select({ ISBN: 0 })
+        if (rating || rating === 0 || rating === "") {
+            if (!(isEmpty(rating))) return res.status(400).send({ status: false, message: "rating is Empty." })
+        }
+
+        /*................Checking validity of fields....................*/
+        if (rating || rating === 0) {
+            if (!(isValidRating(rating))) return res.status(400).send({ status: false, message: "rating is invalid. Please provide rating between 1 and 5" })
+        }
+
+        /*.................Checking if book data exist..................*/
+        let bookData = await bookModel.findOne({ _id: bookId, isDeleted: false }).select({ ISBN: 0, __v: 0 })
         if (!bookData) return res.status(404).send({ status: false, message: "Book not found" })
 
-        /*.................Checking if review data is present in DB.....*/
-        let reviewData = await reviewModel.findOne({ _id: reviewId, bookId: bookId, isDeleted: false })
-        if (!reviewData) return res.status(404).send({ status: false, message: "No review found" })
-
         /*.................Updating the review.........................*/
-        await reviewModel.findOneAndUpdate({ _id: reviewId }, { $set: { reviewedBy: data.reviewedBy, reviewedAt: reviewData.reviewedAt, rating: data.rating, review: data.review } }, { new: true })
+        let reviewData = await reviewModel.findOneAndUpdate({ bookId: bookId, _id: reviewId, isDeleted: false }, { $set: { reviewedBy, rating, review } },
+            { new: true }).select({ isDeleted: 0, __v: 0, createdAt: 0, updatedAt: 0 })
 
-        /*..................Fetching all the reviews present..........*/
-        const totalReviews = await reviewModel.find({ bookId: bookId, isDeleted: false }).select({ _id: 1, bookId: 1, reviewedBy: 1, reviewedAt: 1, rating: 1, review: 1 })
+        /*.................Checking if review data exist..............*/
+        if (!reviewData) return res.status(404).send({ status: false, message: "Review not found or is deleted" })
 
-        /*................Adding reviewsData key in bookData..........*/
-        let obj = { _id: bookData._id, title: bookData.title, excerpt: bookData.excerpt, userId: bookData.userId, category: bookData.category, subcategory: bookData.subcategory, isDeleted: bookData.isDeleted, reviews: totalReviews.length, releasedAt: bookData.releasedAt, createdAt: bookData.createdAt, updatedAt: bookData.updatedAt, reviewsData: totalReviews }
+        /*................Adding reviewData in book...................*/
+        let bookWithReview = { ...bookData._doc, reviewsData: [reviewData] }
 
         /*................Returning bookData with reviews............*/
-        return res.status(200).send({ status: true, message: "Book list", data: obj })
+        return res.status(200).send({ status: true, message: "success", data: bookWithReview })
 
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message })
@@ -95,29 +128,28 @@ const updateReview = async function (req, res) {
 const deleteReview = async function (req, res) {
     try {
         /*.................Getting bookId from params....................*/
-        const bookId = req.params.bookId
+        let bookId = req.params.bookId
+
         /*.................Getting reviewId from params..................*/
-        const reviewId = req.params.reviewId
+        let reviewId = req.params.reviewId
+
         /*.................Checking if valid bookId......................*/
-        if (!isValidObjectId(bookId)) return res.status(400).send({ stauts: false, message: "userId is invalid" })
+        if (!isValidObjectId(bookId)) return res.status(400).send({ status: false, message: "User Id invalid" })
+
         /*.................Checking if valid reviewIdId..................*/
-        if (!isValidObjectId(reviewId)) return res.status(400).send({ stauts: false, message: "reviewId is invalid" })
+        if (!isValidObjectId(reviewId)) return res.status(400).send({ status: false, message: "Review Id is invalid" })
 
         /*.................Checking if book data is present in DB.......*/
         let bookData = await bookModel.findById(bookId)
         if (!bookData) return res.status(404).send({ status: false, message: "Book not found" })
-        if (bookData.isDeleted == true) return res.status(404).send({ status: false, message: "Book has been deleted" })
+        if (bookData.isDeleted == true) return res.status(404).send({ status: false, message: "Book has already been deleted" })
 
-        /*.................Checking if review data is present in DB......*/
-        let reviewData = await reviewModel.findOne({ _id: reviewId, bookId: bookId, isDeleted: false })
-        if (!reviewData) return res.status(404).send({ status: false, message: "No review found" })
+        /*....Checking if review exist & then updating is deleted to true...*/
+        let reviewData = await reviewModel.findOneAndUpdate({ _id: reviewId, bookId: bookId, isDeleted: false }, { $set: { isDeleted: true } })
+        if (!reviewData) return res.status(404).send({ status: false, message: "Review not found or is deleted" })
 
-        /*..................Updating isDeleted to true..................*/
-        await reviewModel.findOneAndUpdate({ _id: reviewId, isDeleted: false }, { $set: { isDeleted: true } })
-        /*..................Fetching all the reviews present...........*/
-        const totalReviews = await reviewModel.find({ bookId: bookId, isDeleted: false })
-        /*..................Decreasing the review count by 1..........*/
-        await bookModel.findByIdAndUpdate(bookId, { $set: { reviews: totalReviews.length } })
+        await bookModel.findByIdAndUpdate({ _id: bookId }, { $inc: { reviews: -1 } })
+
         /*..................Sending response with message.............*/
         return res.status(200).send({ status: true, message: "Data deleted successfully" })
 

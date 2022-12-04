@@ -12,7 +12,7 @@ const authenticate = async function(req, res, next){
         //VERIFYING THE TOKEN WITH SIGNATURE.-----------------------------------------------------
         jwt.verify(token, "Secret-Key", function(err, tokenVerify){
             if(err){
-                return res.status(401).send({status:false, message:"Invalid token coming from header"})
+                return res.status(401).send({status:false, message:"Invalid token coming from header or token may be expired."})
             }else{
                 req.tokenVerify = tokenVerify
                 return next()
@@ -32,7 +32,7 @@ const authorization = async function(req, res ,next){
     
         let book = await bookModel.findById(bookId)
     
-        if(!book){return res.status(404).send({status:false, message:"book Id is not present in DB"})}
+        if(!book){return res.status(404).send({status:false, message:"book is not present in DB"})}
     
         //AUTHORISATION CHECK.--------------------------------------------------------------------------
         if(book.userId != req.tokenVerify.userId){return res.status(403).send({status:false, message:"you are unauthorized to make changes"})}

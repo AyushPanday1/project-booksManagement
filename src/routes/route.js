@@ -20,7 +20,6 @@ router.get("/books", middleware.authenticate, bookController.allBooks);
 /*------------------------Fetch Books(path params)---------------------*/
 router.get("/books/:bookId", middleware.authenticate, bookController.getBooksById);
 
-
 /*-------------------------UPDATE BOOKS--------------------------------*/
 router.put("/books/:bookId" , middleware.authenticate, middleware.authorization, bookController.updatebook)
 

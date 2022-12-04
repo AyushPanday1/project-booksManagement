@@ -48,4 +48,9 @@ const isValidISBN = function (ISBN) {
     return regex.test(ISBN)
 }
 
-module.exports = { isEmpty, isValidTitle, isValidPhone, isValidMail, isValidFullName, isValidPassword, isValidRating, isValidPincode, isValidISBN }
+const isValidDate = function (Date) {
+    const regex = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/
+    return regex.test(Date)
+}
+
+module.exports = { isEmpty, isValidTitle, isValidPhone, isValidMail, isValidFullName, isValidPassword, isValidRating, isValidPincode, isValidISBN, isValidDate }

@@ -26,7 +26,8 @@ const userModel = new mongoose.Schema({
     },
     address : {
         street : {
-            type : String
+            type : String,
+            trim : true
         },
         city : {
             type : String
