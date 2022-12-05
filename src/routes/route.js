@@ -12,7 +12,7 @@ router.post("/register", userController.createUser);
 router.post("/login", userController.login);
 
 /*---------------------------Book Create ------------------------------*/
-router.post("/createbook" , middleware.authenticate ,bookController.createBook)
+router.post("/books" , middleware.authenticate ,bookController.createBook)
 
 /*------------------------Fetch Books----------------------------------*/
 router.get("/books", middleware.authenticate, bookController.allBooks);

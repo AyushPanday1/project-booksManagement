@@ -162,9 +162,13 @@ const updatebook = async function (req, res) {
         if (!(isEmpty(ISBN))) { return res.status(400).send({ status: false, message: "ISBN is empty" }) }
 
         /*------------------------------- Validation(Regex)  -----------------------------------*/
-        if (!(isValidISBN(ISBN))) return res.status(400).send({ status: false, message: "ISBN is invalid, please provide ISBN with 13 digits or one hyphen symbol do not include 0 in first three digits for ex: 129-0879087670 or 1290879087670." })
+        if(ISBN){
+            if (!(isValidISBN(ISBN))) return res.status(400).send({ status: false, message: "ISBN is invalid, please provide ISBN with 13 digits or one hyphen symbol do not include 0 in first three digits for ex: 129-0879087670 or 1290879087670." })
+        }
         
-        if (!(isValidDate(releasedAt))) return res.status(400).send({ status: false, message: "Date is invalid. Please provide date in yyyy-mm-dd format for ex: 2014-04-14." })
+        if(releasedAt){
+            if (!(isValidDate(releasedAt))) return res.status(400).send({ status: false, message: "Date is invalid. Please provide date in yyyy-mm-dd format for ex: 2014-04-14." })
+        }
 
         const findinDB = await bookModel.findById(id);
 
