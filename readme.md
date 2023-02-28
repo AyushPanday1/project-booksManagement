@@ -9,27 +9,23 @@ User, Book and review schema.
 ## Apis's
 
 ## User APIs 
-### POST /register
-### POST /login
+POST /register
+POST /login
 
 ## Books API
-### POST /books
-### GET /books
-
-### GET /books/:bookId
-### PUT /books/:bookId 
-
-### DELETE /books/:bookId
+POST /books
+GET /books
+GET /books/:bookId
+PUT /books/:bookId 
+DELETE /books/:bookId
 
 ## Review APIs
-### POST /books/:bookId/review
-
-### PUT /books/:bookId/review/:reviewId
-
-### DELETE /books/:bookId/review/:reviewId
+POST /books/:bookId/review
+PUT /books/:bookId/review/:reviewId
+DELETE /books/:bookId/review/:reviewId
 
 ## Implemented Authentication and authorization for security reasons.
 
 ## Dependencies:
-JWT, 
+JWT, Moment, Express.js
 
