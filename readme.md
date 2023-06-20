@@ -1,5 +1,6 @@
 # Books Management
-
+## Softwares:
+NodeJs, ExpressJs, MongoDb, Git, Mongoose, Jwt.
 
 ## This project is about a management of authors, books, user and review about books.
 
@@ -26,6 +27,4 @@ DELETE /books/:bookId
 
 ## Implemented Authentication and authorization for security reasons.
 
-## Dependencies:
-JWT, Moment, Express.js
 
