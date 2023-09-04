@@ -16,8 +16,6 @@
 ## Introduction
 Welcome to the Books Management Backend project! This repository houses the backend component of a comprehensive system for managing authors, books, users, and book reviews. With a user-friendly API and robust data models, this project offers a solid foundation for building an advanced book management application.
 
-![Bookstore](https://cdn.example.com/bookstore-image.jpg)
-
 ## Technologies Used
 - Node.js: A runtime environment for executing JavaScript code on the server-side.
 - Express.js: A minimalist web application framework for Node.js.
@@ -77,3 +75,9 @@ Contributions are welcome! If you have ideas for improvements, new features, or 
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+
+## Feel free to use as your Backend for your project!
+
+
+## Thank You! ❤️
