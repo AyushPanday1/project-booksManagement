@@ -1,4 +1,4 @@
-# Books Management
+# Books Management application
 
 ![Coding](https://cdn.dribbble.com/users/5422563/screenshots/12564175/as_4x.jpg)
 
